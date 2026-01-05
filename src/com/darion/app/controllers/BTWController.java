@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -21,18 +22,23 @@ public class BTWController {
     @FXML
     private Button chooseButton, createNewButton, overwriteButton, applyButton;
 
+    private final Path BACKUPS_ROOT = Paths.get(System.getProperty("user.home"), "Documents", "BTWSaver_Backups");
     private Path parent;
     private Path pathToSaveFile;
-    private Path pathToZipFile;
+    private String saveFileName;
     private int lastIndex = 0;
 
     @FXML
     public void initialize() throws IOException {
+        Files.createDirectories(BACKUPS_ROOT);
+
         lastIndex = Integer.parseInt(Files.readString(Path.of("C:\\Dev\\01_Personal\\Java\\BTWSaver\\src\\com\\darion\\app\\lastIndex")));
         pathToSaveFile = Path.of(Files.readString(Path.of("C:\\Dev\\01_Personal\\Java\\BTWSaver\\src\\com\\darion\\app\\pathToChosenSaveFile")));
+
         parent = pathToSaveFile.getParent();
-        chooseLabel.setText(pathToSaveFile.toString());
-        pathToZipFile = parent.resolve(pathToSaveFile.getFileName().toString() + ".zip");
+        saveFileName = pathToSaveFile.getFileName().toString();
+
+        updateChooseLabel();
         updateCurrentFileLabel();
     }
 
@@ -40,20 +46,18 @@ public class BTWController {
     public void onChooseFile() throws IOException {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         Stage stage = (Stage) chooseButton.getScene().getWindow();
-
         pathToSaveFile = directoryChooser.showDialog(stage).toPath();
+
         parent = pathToSaveFile.getParent();
-        createPathToZipFile();
-
-
-        chooseLabel.setText(pathToSaveFile.toString());
+        saveFileName = pathToSaveFile.getFileName().toString();
 
         Files.writeString(Path.of("C:\\Dev\\01_Personal\\Java\\BTWSaver\\src\\com\\darion\\app\\pathToChosenSaveFile"), pathToSaveFile.toString());
+
+        updateChooseLabel();
     }
 
-    private void createPathToZipFile() {
-        String nameOfSaveZipFile = pathToSaveFile.getFileName().toString() + ".zip";
-        pathToZipFile = parent.resolve(nameOfSaveZipFile);
+    private void updateChooseLabel() {
+        chooseLabel.setText(pathToSaveFile.toString());
     }
 
     @FXML
@@ -61,13 +65,9 @@ public class BTWController {
         if (lastIndex == 0)
             return;
 
-        String currentName;
-        Path currentPath;
-
-        currentName = (lastIndex == 1) ? "IMNOTBETTERTHANWOLVES.zip" : "IMNOTBETTERTHANWOLVES" + " (" + lastIndex  + ")" + ".zip";
-
-        currentPath = parent.resolve(currentName);
-        Files.delete(currentPath);
+        String lastZipFileName = (lastIndex == 1) ? saveFileName + ".zip" : saveFileName + " (" + lastIndex  + ")" + ".zip";
+        Path pathToLastZipFile = parent.resolve(lastZipFileName);
+        Files.delete(pathToLastZipFile);
         lastIndex--;
 
 
@@ -88,15 +88,11 @@ public class BTWController {
 
     @FXML
     public void onCreateNew() throws IOException {
-        if (lastIndex == 0)
-            zip(pathToSaveFile, pathToZipFile);
-        else {
-            String fileName = "IMNOTBETTERTHANWOLVES" + " (" + (lastIndex + 1) + ")" + ".zip";
-            Path fileNamePath = parent.resolve(fileName);
-            zip(pathToSaveFile, fileNamePath);
-
-        }
+        String newZipFileName = (lastIndex == 0) ? saveFileName + ".zip" : saveFileName + " (" + (lastIndex + 1) + ")" + ".zip";
+        Path pathToNewZipFile = parent.resolve(newZipFileName);
+        zip(pathToSaveFile, pathToNewZipFile);
         lastIndex++;
+
         updateCurrentFileLabel();
         updateLastIndex();
     }
@@ -106,14 +102,10 @@ public class BTWController {
         if (lastIndex == 0)
             return;
 
-        Path parent = pathToZipFile.getParent();
-        if (lastIndex == 1)
-            zip(pathToSaveFile, pathToZipFile);
-        else {
-            String currentName = "IMNOTBETTERTHANWOLVES" + " (" + lastIndex + ")" + ".zip";
-            Path currentPath = parent.resolve(currentName);
-            zip(pathToSaveFile, currentPath);
-        }
+        String lastZipFileName = (lastIndex == 1) ? saveFileName + ".zip" : saveFileName + " (" + (lastIndex) + ")" + ".zip";
+        Path pathToLastZipFile = parent.resolve(lastZipFileName);
+        zip(pathToSaveFile, pathToLastZipFile);
+
         updateCurrentFileLabel();
     }
 
@@ -122,26 +114,22 @@ public class BTWController {
         if (lastIndex == 0)
             return;
 
-        Path parent = pathToZipFile.getParent();
-        if (lastIndex == 1)
-            unzip(this.parent, pathToZipFile);
-        else {
-            String currentName = "IMNOTBETTERTHANWOLVES" + " (" + lastIndex + ")" + ".zip";
-            Path currentPath = parent.resolve(currentName);
-            unzip(this.parent, currentPath);
-        }
+        String lastZipFileName = (lastIndex == 1) ? saveFileName + ".zip" : saveFileName + " (" + (lastIndex) + ")" + ".zip";
+        Path pathToLastZipFile = parent.resolve(lastZipFileName);
+        unzip(parent, pathToLastZipFile);
+
     }
 
     private void updateCurrentFileLabel() {
         if (lastIndex == 0)
             currentFileLabel.setText("No saved files");
         else if (lastIndex == 1) {
-            currentFileLabel.setText(pathToZipFile.getFileName().toString());
+            currentFileLabel.setText(saveFileName + ".zip");
         }
         else {
-            String currentName = "IMNOTBETTERTHANWOLVES" + " (" + lastIndex + ")" + ".zip";
-            Path currentPath = parent.resolve(currentName);
-            currentFileLabel.setText(currentPath.getFileName().toString());
+            String lastZipFileName = saveFileName + " (" + lastIndex + ")" + ".zip";
+            Path pathToLastZipFile = parent.resolve(lastZipFileName);
+            currentFileLabel.setText(pathToLastZipFile.getFileName().toString());
         }
     }
 

@@ -7,10 +7,13 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Properties;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -22,21 +25,29 @@ public class BTWController {
     @FXML
     private Button chooseButton, createNewButton, overwriteButton, applyButton;
 
+
     private final Path BACKUPS_ROOT = Paths.get(System.getProperty("user.home"), "Documents", "BTWSaver_Backups");
     private Path parent;
     private Path pathToSaveFile;
     private String saveFileName;
     private int lastIndex = 0;
 
+    private final Path CONFIG_FILE = BACKUPS_ROOT.resolve("config.properties");
+    private Properties appProperties = new Properties();
+
     @FXML
     public void initialize() throws IOException {
-        Files.createDirectories(BACKUPS_ROOT);
+        loadSettings();
 
-        lastIndex = Integer.parseInt(Files.readString(Path.of("C:\\Dev\\01_Personal\\Java\\BTWSaver\\src\\com\\darion\\app\\lastIndex")));
-        pathToSaveFile = Path.of(Files.readString(Path.of("C:\\Dev\\01_Personal\\Java\\BTWSaver\\src\\com\\darion\\app\\pathToChosenSaveFile")));
+        if (!Files.exists(BACKUPS_ROOT))
+            Files.createDirectories(BACKUPS_ROOT);
 
-        parent = pathToSaveFile.getParent();
-        saveFileName = pathToSaveFile.getFileName().toString();
+        if (pathToSaveFile != null) {
+            parent = pathToSaveFile.getParent();
+            saveFileName = pathToSaveFile.getFileName().toString();
+        }
+
+        System.out.println(pathToSaveFile);
 
         updateChooseLabel();
         updateCurrentFileLabel();
@@ -51,13 +62,16 @@ public class BTWController {
         parent = pathToSaveFile.getParent();
         saveFileName = pathToSaveFile.getFileName().toString();
 
-        Files.writeString(Path.of("C:\\Dev\\01_Personal\\Java\\BTWSaver\\src\\com\\darion\\app\\pathToChosenSaveFile"), pathToSaveFile.toString());
-
+        saveSettings();
         updateChooseLabel();
+        updateCurrentFileLabel();
     }
 
     private void updateChooseLabel() {
-        chooseLabel.setText(pathToSaveFile.toString());
+        if (pathToSaveFile == null)
+            chooseLabel.setText("Choose a save file");
+        else
+            chooseLabel.setText(pathToSaveFile.toString());
     }
 
     @FXML
@@ -71,18 +85,26 @@ public class BTWController {
         lastIndex--;
 
 
+        saveSettings();
         updateCurrentFileLabel();
-        updateLastIndex();
     }
 
     @FXML
     public void onDeleteAll() throws IOException {
         try (Stream<Path> stream = Files.walk(parent)) {
-            for (Path path : stream.toList())
-                if (path.getFileName().toString().toLowerCase().endsWith(".zip"))
+            for (Path path : stream.toList()) {
+                String currentSaveFileName = path.getFileName().toString().toLowerCase();
+
+                boolean isOriginal = currentSaveFileName.equals(saveFileName.toLowerCase() + ".zip");
+                boolean isNumbered = currentSaveFileName.startsWith(saveFileName.toLowerCase() + " (") && currentSaveFileName.endsWith(").zip");
+
+                if (isOriginal || isNumbered)
                     Files.delete(path);
+                }
         }
         lastIndex = 0;
+
+        saveSettings();
         updateCurrentFileLabel();
     }
 
@@ -93,8 +115,8 @@ public class BTWController {
         zip(pathToSaveFile, pathToNewZipFile);
         lastIndex++;
 
+        saveSettings();
         updateCurrentFileLabel();
-        updateLastIndex();
     }
 
     @FXML
@@ -102,9 +124,7 @@ public class BTWController {
         if (lastIndex == 0)
             return;
 
-        String lastZipFileName = (lastIndex == 1) ? saveFileName + ".zip" : saveFileName + " (" + (lastIndex) + ")" + ".zip";
-        Path pathToLastZipFile = parent.resolve(lastZipFileName);
-        zip(pathToSaveFile, pathToLastZipFile);
+        zip(pathToSaveFile, getPathToLastFile());
 
         updateCurrentFileLabel();
     }
@@ -114,25 +134,34 @@ public class BTWController {
         if (lastIndex == 0)
             return;
 
-        String lastZipFileName = (lastIndex == 1) ? saveFileName + ".zip" : saveFileName + " (" + (lastIndex) + ")" + ".zip";
-        Path pathToLastZipFile = parent.resolve(lastZipFileName);
+        Path pathToLastZipFile = getPathToLastFile();
+
+        if (!Files.exists(pathToLastZipFile)) {
+            currentFileLabel.setText("Error: File Missing!");
+            return;
+        }
+
         unzip(parent, pathToLastZipFile);
 
     }
 
+
     private void updateCurrentFileLabel() {
-        if (lastIndex == 0)
+        if (lastIndex == 0) {
             currentFileLabel.setText("No saved files");
-        else if (lastIndex == 1) {
-            currentFileLabel.setText(saveFileName + ".zip");
+            return;
         }
-        else {
-            String lastZipFileName = saveFileName + " (" + lastIndex + ")" + ".zip";
-            Path pathToLastZipFile = parent.resolve(lastZipFileName);
-            currentFileLabel.setText(pathToLastZipFile.getFileName().toString());
-        }
+
+        currentFileLabel.setText(getLastFileName());
     }
 
+    private Path getPathToLastFile() {
+        return parent.resolve(getLastFileName());
+    }
+
+    private String getLastFileName() {
+        return (lastIndex == 1) ? saveFileName + ".zip" : saveFileName + " (" + lastIndex + ")" + ".zip";
+    }
 
     private void unzip(Path targetDir, Path zipFile) throws IOException {
         try (ZipInputStream zis = new ZipInputStream(Files.newInputStream(zipFile))) {
@@ -166,9 +195,35 @@ public class BTWController {
         }
     }
 
-    private void updateLastIndex() throws IOException {
-        Path lastIndexPath = Path.of("C:\\Dev\\01_Personal\\Java\\BTWSaver\\src\\com\\darion\\app\\lastIndex");
-        Files.writeString(lastIndexPath, String.valueOf(lastIndex));
+    private void loadSettings() {
+        if (!Files.exists(CONFIG_FILE)) return;
+
+        try (InputStream input = Files.newInputStream(CONFIG_FILE)) {
+            appProperties.load(input);
+
+            String indexStr = appProperties.getProperty("lastIndex", "0");
+            lastIndex = Integer.parseInt(indexStr);
+
+            String pathStr = appProperties.getProperty("targetPath");
+            if (pathStr != null)
+                pathToSaveFile = Path.of(pathStr);
+
+            saveFileName = appProperties.getProperty("saveFileName");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void saveSettings() {
+        try (OutputStream output = Files.newOutputStream(CONFIG_FILE)) {
+            appProperties.setProperty("lastIndex", String.valueOf(lastIndex));
+            appProperties.setProperty("targetPath", pathToSaveFile.toString());
+            appProperties.setProperty("saveFileName", getLastFileName());
+            appProperties.store(output, "BTWSaver Settings");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

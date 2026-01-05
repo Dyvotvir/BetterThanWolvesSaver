@@ -1,0 +1,91 @@
+.root {
+    -fx-background-color: #2b2b2b;
+}
+
+.button {
+    -fx-background-color: linear-gradient(to bottom, #979797, #000000);
+    -fx-text-fill: white;
+    -fx-background-radius: 30;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: linear-gradient(to bottom, #3c3c3c, #000000);
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 255, 255, 0.3), 10, 0, 0, 0);
+}
+
+.button:pressed {
+    -fx-effect: innershadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 2);
+    -fx-translate-y: 1;
+}
+
+.deleteLastStyle {
+    -fx-background-color: linear-gradient(to right, #ff8989, #ff2e2e);
+}
+
+.deleteLastStyle:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 255, 255, 0.3), 10, 0, 0, 0);
+    -fx-background-color: linear-gradient(to right, #9f3e3e, #b81a1a);
+}
+
+.deleteLastStyle:pressed {
+    -fx-background-color: linear-gradient(to right, #8e2e2e, #930202);
+}
+
+
+
+.deleteAllStyle {
+    -fx-background-color: linear-gradient(to right, #9f0000, #000000);
+}
+
+.deleteAllStyle:hover {
+    -fx-background-color: linear-gradient(to right, #4a0000, #000000);
+}
+
+.deleteAllStyle:pressed {
+    -fx-background-color: linear-gradient(to right, #610000, #000000);
+}
+
+
+
+.createNewStyle {
+    -fx-background-color: linear-gradient(to right, #1457ff, #1fffd6);
+}
+
+.createNewStyle:hover {
+    -fx-background-color: linear-gradient(to right, #688aff, #7dffec);
+}
+
+.createNewStyle:pressed {
+    -fx-background-color: linear-gradient(to right, #002aff, #00ffd0);
+}
+
+
+.overwriteStyle {
+    -fx-background-color: linear-gradient(to right, #ff9114, #b5ac00);
+}
+
+.overwriteStyle:hover {
+    -fx-background-color: linear-gradient(to right, #ffa841, #fff701);
+}
+
+.overwriteStyle:pressed {
+    -fx-background-color: linear-gradient(to right, #ff8900, #9a9100);
+}
+
+
+.applyStyle {
+    -fx-background-color: linear-gradient(to right, #11ff00, #00ff16);
+}
+
+.applyStyle:hover {
+    -fx-background-color: linear-gradient(to right, #58ff4d, #67fd74);
+}
+
+.applyStyle:pressed {
+    -fx-background-color: linear-gradient(to right, #099800, #00af0f);
+}
+
+

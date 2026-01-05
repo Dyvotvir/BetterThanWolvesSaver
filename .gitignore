@@ -1,0 +1,23 @@
+### IntelliJ IDEA (Critical) ###
+.idea/
+*.iml
+*.iws
+out/
+
+### Minecraft Backups (Critical for BTWSaver) ###
+*.zip
+
+### Java Compiled Files ###
+*.class
+
+### Mac OS ###
+.DS_Store
+
+### Windows ###
+Thumbs.db
+
+### Eclipse (Standard Safety) ###
+.classpath
+.project
+.settings/
+bin/

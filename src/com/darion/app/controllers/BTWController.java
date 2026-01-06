@@ -25,46 +25,45 @@ public class BTWController {
     @FXML
     private Button chooseButton, createNewButton, overwriteButton, applyButton;
 
-
-    private final Path BACKUPS_ROOT = Paths.get(System.getProperty("user.home"), "Documents", "BTWSaver_Backups");
-    private Path parent;
+    private int lastIndex = 0;
     private Path pathToSaveFile;
     private String saveFileName;
-    private int lastIndex = 0;
-
-    private final Path CONFIG_FILE = BACKUPS_ROOT.resolve("config.properties");
+    private Path parent;
+    private Path configFile;
     private Properties appProperties = new Properties();
 
     @FXML
     public void initialize() throws IOException {
+        createParentAndConfigFile();
         loadSettings();
-
-        if (!Files.exists(BACKUPS_ROOT))
-            Files.createDirectories(BACKUPS_ROOT);
-
-        if (pathToSaveFile != null) {
-            parent = pathToSaveFile.getParent();
-            saveFileName = pathToSaveFile.getFileName().toString();
-        }
-
-        System.out.println(pathToSaveFile);
 
         updateChooseLabel();
         updateCurrentFileLabel();
     }
 
-    @FXML
-    public void onChooseFile() throws IOException {
-        DirectoryChooser directoryChooser = new DirectoryChooser();
-        Stage stage = (Stage) chooseButton.getScene().getWindow();
-        pathToSaveFile = directoryChooser.showDialog(stage).toPath();
+    private void createParentAndConfigFile() throws IOException {
+        parent = Paths.get(System.getProperty("user.home"), "Documents", "BTWSaver_Backups");
+        configFile = parent.resolve("config.properties");
 
-        parent = pathToSaveFile.getParent();
+        if (!Files.exists(parent))
+            Files.createDirectories(parent);
+        if (!Files.exists(configFile))
+            Files.createFile(configFile);
+    }
+
+    @FXML
+    public void onChooseFile() {
+        if (saveFileName != null)
+            saveSettings();
+
+        Stage stage = (Stage) chooseButton.getScene().getWindow();
+        pathToSaveFile = new DirectoryChooser().showDialog(stage).toPath();
         saveFileName = pathToSaveFile.getFileName().toString();
 
-        saveSettings();
+        loadSettings();
         updateChooseLabel();
         updateCurrentFileLabel();
+        saveSettings();
     }
 
     private void updateChooseLabel() {
@@ -79,11 +78,12 @@ public class BTWController {
         if (lastIndex == 0)
             return;
 
-        String lastZipFileName = (lastIndex == 1) ? saveFileName + ".zip" : saveFileName + " (" + lastIndex  + ")" + ".zip";
-        Path pathToLastZipFile = parent.resolve(lastZipFileName);
+        Path pathToLastZipFile = getPathToLastFile();
+        if (pathToLastZipFile == null)
+            return;
+
         Files.delete(pathToLastZipFile);
         lastIndex--;
-
 
         saveSettings();
         updateCurrentFileLabel();
@@ -126,7 +126,6 @@ public class BTWController {
 
         zip(pathToSaveFile, getPathToLastFile());
 
-        updateCurrentFileLabel();
     }
 
     @FXML
@@ -135,13 +134,15 @@ public class BTWController {
             return;
 
         Path pathToLastZipFile = getPathToLastFile();
+        if (pathToLastZipFile == null)
+            return;
 
         if (!Files.exists(pathToLastZipFile)) {
             currentFileLabel.setText("Error: File Missing!");
             return;
         }
 
-        unzip(parent, pathToLastZipFile);
+        unzip(pathToSaveFile.getParent(), pathToLastZipFile);
 
     }
 
@@ -156,10 +157,15 @@ public class BTWController {
     }
 
     private Path getPathToLastFile() {
+        if (getLastFileName() == null)
+            return null;
         return parent.resolve(getLastFileName());
     }
 
     private String getLastFileName() {
+        if (lastIndex == 0)
+            return null;
+
         return (lastIndex == 1) ? saveFileName + ".zip" : saveFileName + " (" + lastIndex + ")" + ".zip";
     }
 
@@ -196,19 +202,17 @@ public class BTWController {
     }
 
     private void loadSettings() {
-        if (!Files.exists(CONFIG_FILE)) return;
-
-        try (InputStream input = Files.newInputStream(CONFIG_FILE)) {
+        try (InputStream input = Files.newInputStream(configFile)) {
             appProperties.load(input);
 
-            String indexStr = appProperties.getProperty("lastIndex", "0");
-            lastIndex = Integer.parseInt(indexStr);
+            String loadedSavePath = (saveFileName == null) ? appProperties.getProperty("lastOpenedSaveFile") : appProperties.getProperty(saveFileName + ".targetPath");
+            if (loadedSavePath != null) {
+                pathToSaveFile = Path.of(loadedSavePath);
+                saveFileName = pathToSaveFile.getFileName().toString();
+            }
 
-            String pathStr = appProperties.getProperty("targetPath");
-            if (pathStr != null)
-                pathToSaveFile = Path.of(pathStr);
-
-            saveFileName = appProperties.getProperty("saveFileName");
+            String loadedIndex = appProperties.getProperty(saveFileName + ".lastIndex", "0");
+            lastIndex = Integer.parseInt(loadedIndex);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -216,14 +220,17 @@ public class BTWController {
     }
 
     private void saveSettings() {
-        try (OutputStream output = Files.newOutputStream(CONFIG_FILE)) {
-            appProperties.setProperty("lastIndex", String.valueOf(lastIndex));
-            appProperties.setProperty("targetPath", pathToSaveFile.toString());
-            appProperties.setProperty("saveFileName", getLastFileName());
+        if (saveFileName == null) return;
+
+        try (OutputStream output = Files.newOutputStream(configFile)) {
+            appProperties.setProperty("lastOpenedSaveFile", pathToSaveFile.toString());
+            appProperties.setProperty(saveFileName + ".lastIndex", String.valueOf(lastIndex));
+            appProperties.setProperty(saveFileName + ".targetPath", pathToSaveFile.toString());
             appProperties.store(output, "BTWSaver Settings");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
 }

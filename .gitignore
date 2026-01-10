@@ -1,23 +1,18 @@
-### IntelliJ IDEA (Critical) ###
+# Maven
+target/
+*.log
+
+# IntelliJ (Old trash)
 .idea/
 *.iml
-*.iws
-out/
 
-### Minecraft Backups (Critical for BTWSaver) ###
-*.zip
+# VS Code (User specific settings)
+.vscode/
+*.code-workspace
 
-### Java Compiled Files ###
+# Java
 *.class
 
-### Mac OS ###
+# OS junk
 .DS_Store
-
-### Windows ###
 Thumbs.db
-
-### Eclipse (Standard Safety) ###
-.classpath
-.project
-.settings/
-bin/

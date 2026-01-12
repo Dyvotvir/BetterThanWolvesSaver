@@ -5,83 +5,209 @@
 <?import javafx.scene.control.CheckMenuItem?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="600.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.darion.app.controllers.BTWController">
    <children>
-      <HBox alignment="BOTTOM_CENTER" prefHeight="100.0" prefWidth="850.0">
+      <HBox alignment="CENTER" layoutY="353.0" prefHeight="166.0" prefWidth="850.0">
          <children>
-            <MenuButton mnemonicParsing="false" text="MenuButton">
-              <items>
-                <MenuItem mnemonicParsing="false" text="Action 1" />
-                <MenuItem mnemonicParsing="false" text="Action 2" />
-                  <CheckMenuItem mnemonicParsing="false" text="Unspecified Action" />
-              </items>
-            </MenuButton>
-            <Label fx:id="btwLabel" text="Better Than Wolves" textFill="WHITE">
-               <font>
-                  <Font name="Ink Free" size="46.0" />
-               </font>
-            </Label>
-         </children>
-      </HBox>
-      <HBox alignment="TOP_CENTER" layoutY="92.0" prefHeight="100.0" prefWidth="850.0">
-         <children>
-            <Label fx:id="saverLabel" text="Saver" textFill="LIME">
-               <font>
-                  <Font name="Ink Free" size="46.0" />
-               </font>
-            </Label>
-         </children>
-      </HBox>
-      <HBox alignment="CENTER" layoutY="300.0" prefHeight="150.0" prefWidth="850.0">
-         <children>
-            <Button fx:id="deleteLastButton" mnemonicParsing="false" onAction="#onDeleteLast" styleClass="deleteLastStyle" text="Delete last">
-               <font>
-                  <Font size="18.0" />
-               </font>
-               <HBox.margin>
-                  <Insets right="40.0" />
-               </HBox.margin>
-            </Button>
-            <Button fx:id="deleteAllButton" mnemonicParsing="false" onAction="#onDeleteAll" prefHeight="36.0" prefWidth="116.0" styleClass="deleteAllStyle" text="Delete All">
-               <font>
-                  <Font size="18.0" />
-               </font>
-               <HBox.margin>
-                  <Insets right="40.0" />
-               </HBox.margin>
-            </Button>
-            <Button fx:id="createNewButton" mnemonicParsing="false" onAction="#onCreateNew" prefHeight="39.0" prefWidth="130.0" styleClass="createNewStyle" text="Create New">
-               <font>
-                  <Font size="18.0" />
-               </font>
+            <VBox alignment="BOTTOM_CENTER" prefHeight="124.0" prefWidth="127.0">
+               <children>
+                  <Button fx:id="deleteLastButton" mnemonicParsing="false" onAction="#onDeleteLast" prefHeight="39.0" prefWidth="128.0" styleClass="deleteLastStyle" text="Delete last">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </Button>
+                  <VBox alignment="TOP_CENTER" prefHeight="89.0" prefWidth="127.0">
+                     <children>
+                        <Label fx:id="aysDeleteLastLabel" text="Are you sure?" textFill="WHITE" visible="false">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="20.0" />
+                           </VBox.margin>
+                        </Label>
+                        <HBox alignment="TOP_CENTER" prefHeight="22.0" prefWidth="127.0">
+                           <children>
+                              <Button fx:id="yesDeleteLastButton" mnemonicParsing="false" onAction="#onYesDeleteLast" styleClass="yes-button-style" text="Yes" visible="false" />
+                              <Button fx:id="noDeleteLastButton" mnemonicParsing="false" onAction="#onNoDeleteLast" styleClass="no-button-style" text="No" visible="false">
+                                 <HBox.margin>
+                                    <Insets left="20.0" />
+                                 </HBox.margin>
+                              </Button>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </HBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </VBox>
+               </children>
                <HBox.margin>
                   <Insets />
                </HBox.margin>
-            </Button>
-            <Button fx:id="overwriteButton" mnemonicParsing="false" onAction="#onOverwrite" prefHeight="39.0" prefWidth="120.0" styleClass="overwriteStyle" text="Overwrite">
-               <font>
-                  <Font size="18.0" />
-               </font>
+            </VBox>
+            <VBox alignment="BOTTOM_CENTER" prefHeight="124.0" prefWidth="129.0">
+               <children>
+                  <Button fx:id="deleteAllButton" mnemonicParsing="false" onAction="#onDeleteAll" prefHeight="39.0" prefWidth="141.0" styleClass="deleteAllStyle" text="Delete All">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </Button>
+                  <VBox alignment="TOP_CENTER" prefHeight="89.0" prefWidth="127.0">
+                     <children>
+                        <Label fx:id="aysDeleteAllLabel" text="Are you sure?" textFill="WHITE" visible="false">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="20.0" />
+                           </VBox.margin>
+                        </Label>
+                        <HBox alignment="TOP_CENTER" prefHeight="22.0" prefWidth="127.0">
+                           <children>
+                              <Button fx:id="yesDeleteAllButton" mnemonicParsing="false" onAction="#onYesDeleteAll" styleClass="yes-button-style" text="Yes" visible="false" />
+                              <Button fx:id="noDeleteAllButton" mnemonicParsing="false" onAction="#onNoDeleteAll" styleClass="no-button-style" text="No" visible="false">
+                                 <HBox.margin>
+                                    <Insets left="20.0" />
+                                 </HBox.margin>
+                              </Button>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
                <HBox.margin>
-                  <Insets left="40.0" right="40.0" />
+                  <Insets left="30.0" />
                </HBox.margin>
-            </Button>
-            <Button fx:id="applyButton" mnemonicParsing="false" onAction="#onApply" prefHeight="39.0" prefWidth="120.0" styleClass="applyStyle" text="Apply">
-               <font>
-                  <Font size="18.0" />
-               </font>
+            </VBox>
+            <VBox alignment="BOTTOM_CENTER" prefHeight="124.0" prefWidth="131.0">
+               <children>
+                  <Button fx:id="createNewButton" mnemonicParsing="false" onAction="#onCreateNew" prefHeight="39.0" prefWidth="132.0" styleClass="createNewStyle" text="Create New">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Button>
+                  <VBox alignment="TOP_CENTER" prefHeight="89.0" prefWidth="127.0">
+                     <children>
+                        <Label fx:id="aysCreateNewLabel" text="Are you sure?" textFill="WHITE" visible="false">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="20.0" />
+                           </VBox.margin>
+                        </Label>
+                        <HBox alignment="TOP_CENTER" prefHeight="22.0" prefWidth="127.0">
+                           <children>
+                              <Button fx:id="yesCreateNewButton" mnemonicParsing="false" onAction="#onYesCreateNew" styleClass="yes-button-style" text="Yes" visible="false" />
+                              <Button fx:id="noCreateNewButton" mnemonicParsing="false" onAction="#onNoCreateNew" styleClass="no-button-style" text="No" visible="false">
+                                 <HBox.margin>
+                                    <Insets left="20.0" />
+                                 </HBox.margin>
+                              </Button>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
                <HBox.margin>
-                  <Insets />
+                  <Insets left="30.0" right="30.0" />
                </HBox.margin>
-            </Button>
+            </VBox>
+            <VBox alignment="BOTTOM_CENTER" prefHeight="124.0" prefWidth="128.0">
+               <children>
+                  <Button fx:id="overwriteButton" mnemonicParsing="false" onAction="#onOverwrite" prefHeight="39.0" prefWidth="120.0" styleClass="overwriteStyle" text="Overwrite">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Button>
+                  <VBox alignment="TOP_CENTER" prefHeight="89.0" prefWidth="127.0">
+                     <children>
+                        <Label fx:id="aysOverwriteLabel" text="Are you sure?" textFill="WHITE" visible="false">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="20.0" />
+                           </VBox.margin>
+                        </Label>
+                        <HBox alignment="TOP_CENTER" prefHeight="22.0" prefWidth="127.0">
+                           <children>
+                              <Button fx:id="yesOverwriteButton" mnemonicParsing="false" onAction="#onYesOverwrite" styleClass="yes-button-style" text="Yes" visible="false" />
+                              <Button fx:id="noOverwriteButton" mnemonicParsing="false" onAction="#onNoOverwrite" styleClass="no-button-style" text="No" visible="false">
+                                 <HBox.margin>
+                                    <Insets left="20.0" />
+                                 </HBox.margin>
+                              </Button>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+               <HBox.margin>
+                  <Insets right="30.0" />
+               </HBox.margin>
+            </VBox>
+            <VBox alignment="BOTTOM_CENTER" prefHeight="124.0" prefWidth="117.0">
+               <children>
+                  <Button fx:id="applyButton" mnemonicParsing="false" onAction="#onApply" prefHeight="39.0" prefWidth="120.0" styleClass="applyStyle" text="Apply">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Button>
+                  <VBox alignment="TOP_CENTER" prefHeight="89.0" prefWidth="127.0">
+                     <children>
+                        <Label fx:id="aysApplyLabel" text="Are you sure?" textFill="WHITE" visible="false">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="20.0" />
+                           </VBox.margin>
+                        </Label>
+                        <HBox alignment="TOP_CENTER" prefHeight="22.0" prefWidth="127.0">
+                           <children>
+                              <Button fx:id="yesApplyButton" mnemonicParsing="false" onAction="#onYesApply" styleClass="yes-button-style" text="Yes" visible="false" />
+                              <Button fx:id="noApplyButton" mnemonicParsing="false" onAction="#onNoApply" styleClass="no-button-style" text="No" visible="false">
+                                 <HBox.margin>
+                                    <Insets left="20.0" />
+                                 </HBox.margin>
+                              </Button>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
          </children>
       </HBox>
-      <HBox alignment="CENTER" layoutX="-2.0" layoutY="459.0" prefHeight="94.0" prefWidth="850.0">
+      <HBox alignment="CENTER" layoutX="-2.0" layoutY="514.0" prefHeight="86.0" prefWidth="850.0">
          <children>
             <Label fx:id="currentFIleLabel" text="Current file:" textFill="WHITE">
                <font>
@@ -98,7 +224,7 @@
             </Label>
          </children>
       </HBox>
-      <HBox alignment="CENTER" layoutY="179.0" prefHeight="121.0" prefWidth="850.0">
+      <HBox alignment="CENTER" layoutY="230.0" prefHeight="124.0" prefWidth="850.0">
          <children>
             <Button fx:id="chooseButton" mnemonicParsing="false" onAction="#onChooseFile" styleClass="chooseFileButton" text="Choose Save File">
                <font>
@@ -115,5 +241,40 @@
             </Label>
          </children>
       </HBox>
+      <VBox alignment="CENTER" layoutX="-2.0" prefHeight="200.0" prefWidth="850.0">
+         <children>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="850.0">
+               <children>
+                  <MenuButton mnemonicParsing="false" text="Settings">
+                    <items>
+                        <CheckMenuItem fx:id="warnBeforeActionItem" mnemonicParsing="false" selected="true" text="Warn before an action" />
+                    </items>
+                     <HBox.margin>
+                        <Insets bottom="40.0" />
+                     </HBox.margin>
+                  </MenuButton>
+                  <VBox prefHeight="124.0" prefWidth="549.0">
+                     <children>
+                        <VBox alignment="CENTER" prefHeight="124.0" prefWidth="1000.0">
+                           <children>
+                              <Label fx:id="btwLabel" prefHeight="62.0" prefWidth="398.0" text="Better Than Wolves" textFill="WHITE">
+                                 <font>
+                                    <Font name="Ink Free" size="46.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="saverLabel" prefHeight="62.0" prefWidth="118.0" text="Saver" textFill="LIME">
+                                 <font>
+                                    <Font name="Ink Free" size="46.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="200.0" prefWidth="100.0" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
    </children>
 </AnchorPane>

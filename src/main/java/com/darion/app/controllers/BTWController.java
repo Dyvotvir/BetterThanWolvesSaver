@@ -2,6 +2,7 @@ package com.darion.app.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -19,6 +20,13 @@ public class BTWController {
     private Label chooseLabel, btwLabel, saverLabel, currentFileLabel, zipLabel;
     @FXML
     private Button chooseButton, createNewButton, overwriteButton, applyButton;
+    @FXML
+    private CheckMenuItem warnBeforeActionItem;
+    @FXML
+    private Label aysDeleteLastLabel, aysDeleteAllLabel, aysCreateNewLabel, aysOverwriteLabel, aysApplyLabel;
+    @FXML
+    private Button yesDeleteLastButton, noDeleteLastButton, yesDeleteAllButton, noDeleteAllButton, yesCreateNewButton,
+            noCreateNewButton, yesOverwriteButton, noOverwriteButton, yesApplyButton, noApplyButton;
 
     private int lastIndex = 0;
     private Path pathToSaveFile;
@@ -78,12 +86,32 @@ public class BTWController {
     }
 
     @FXML
+    public void onYesDeleteLast() {
+
+    }
+
+    @FXML
+    public void onNoDeleteLast() {
+
+    }
+
+    @FXML
     public void onDeleteAll() throws IOException {
         backupService.deleteAll(configManager.getParent(), saveFileName);
         lastIndex = 0;
 
         saveSettings();
         updateCurrentFileLabel();
+    }
+
+    @FXML
+    public void onYesDeleteAll() {
+
+    }
+
+    @FXML
+    public void onNoDeleteAll() {
+
     }
 
     @FXML
@@ -99,6 +127,16 @@ public class BTWController {
     }
 
     @FXML
+    public void onYesCreateNew() {
+
+    }
+
+    @FXML
+    public void onNoCreateNew() {
+
+    }
+
+    @FXML
     public void onOverwrite() throws IOException {
         if (lastIndex == 0)
             return;
@@ -108,13 +146,31 @@ public class BTWController {
     }
 
     @FXML
+    public void onYesOverwrite() {
+
+    }
+
+    @FXML
+    public void onNoOverwrite() {
+
+    }
+
+    @FXML
     public void onApply() throws IOException {
         if (lastIndex == 0)
             return;
 
-        Path pathToLastZipFile = getPathToLastFile();
-        if (pathToLastZipFile == null)
+        if (!warnBeforeActionItem.isSelected()) {
+            doTheApply();
             return;
+        }
+
+        setConfirmationMenu(aysApplyLabel, yesApplyButton, noApplyButton, true);
+
+    }
+
+    private void doTheApply() throws IOException {
+        Path pathToLastZipFile = getPathToLastFile();
 
         if (!Files.exists(pathToLastZipFile)) {
             currentFileLabel.setText("Error: File Missing!");
@@ -123,6 +179,23 @@ public class BTWController {
 
         backupService.unzip(pathToSaveFile.getParent(), pathToLastZipFile);
 
+        setConfirmationMenu(aysApplyLabel, yesApplyButton, noApplyButton, false);
+    }
+
+    @FXML
+    public void onYesApply() throws IOException {
+        doTheApply();
+    }
+
+    @FXML
+    public void onNoApply() {
+        setConfirmationMenu(aysApplyLabel, yesApplyButton, noApplyButton, false);
+    }
+
+    private void setConfirmationMenu(Label label, Button yesButton, Button noButton, boolean areVisible) {
+        label.setVisible(areVisible);
+        yesButton.setVisible(areVisible);
+        noButton.setVisible(areVisible);
     }
 
     private void updateCurrentFileLabel() {

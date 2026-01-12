@@ -74,6 +74,17 @@ public class BTWController {
         if (lastIndex == 0)
             return;
 
+        if (!warnBeforeActionItem.isSelected()) {
+            doTheDeleteLast();
+            return;
+        }
+
+        setConfirmationMenu(aysDeleteLastLabel, yesDeleteLastButton, noDeleteLastButton, true);
+
+    }
+
+    @FXML
+    public void doTheDeleteLast() throws IOException {
         Path pathToLastZipFile = getPathToLastFile();
         if (pathToLastZipFile == null)
             return;
@@ -86,17 +97,26 @@ public class BTWController {
     }
 
     @FXML
-    public void onYesDeleteLast() {
-
+    public void onYesDeleteLast() throws IOException {
+        doTheDeleteLast();
+        setConfirmationMenu(aysDeleteLastLabel, yesDeleteLastButton, noDeleteLastButton, false);
     }
 
     @FXML
     public void onNoDeleteLast() {
-
+        setConfirmationMenu(aysDeleteLastLabel, yesDeleteLastButton, noDeleteLastButton, false);
     }
 
     @FXML
     public void onDeleteAll() throws IOException {
+        if (!warnBeforeActionItem.isSelected()) {
+            doTheDeleteAll();
+            return;
+        }
+        setConfirmationMenu(aysDeleteAllLabel, yesDeleteAllButton, noDeleteAllButton, true);
+    }
+
+    private void doTheDeleteAll() throws IOException {
         backupService.deleteAll(configManager.getParent(), saveFileName);
         lastIndex = 0;
 
@@ -105,17 +125,28 @@ public class BTWController {
     }
 
     @FXML
-    public void onYesDeleteAll() {
-
+    public void onYesDeleteAll() throws IOException {
+        doTheDeleteAll();
+        setConfirmationMenu(aysDeleteAllLabel, yesDeleteAllButton, noDeleteAllButton, false);
     }
 
     @FXML
     public void onNoDeleteAll() {
-
+        setConfirmationMenu(aysDeleteAllLabel, yesDeleteAllButton, noDeleteAllButton, false);
     }
 
     @FXML
     public void onCreateNew() throws IOException {
+        if (!warnBeforeActionItem.isSelected()) {
+            doTheCreateNew();
+            return;
+        }
+
+        setConfirmationMenu(aysCreateNewLabel, yesCreateNewButton, noCreateNewButton, true);
+
+    }
+
+    private void doTheCreateNew() throws IOException {
         String newZipFileName = (lastIndex == 0) ? saveFileName + ".zip"
                 : saveFileName + " (" + (lastIndex + 1) + ")" + ".zip";
         Path pathToNewZipFile = configManager.getParent().resolve(newZipFileName);
@@ -127,13 +158,14 @@ public class BTWController {
     }
 
     @FXML
-    public void onYesCreateNew() {
-
+    public void onYesCreateNew() throws IOException {
+        doTheCreateNew();
+        setConfirmationMenu(aysCreateNewLabel, yesCreateNewButton, noCreateNewButton, false);
     }
 
     @FXML
     public void onNoCreateNew() {
-
+        setConfirmationMenu(aysCreateNewLabel, yesCreateNewButton, noCreateNewButton, false);
     }
 
     @FXML
@@ -141,18 +173,28 @@ public class BTWController {
         if (lastIndex == 0)
             return;
 
-        backupService.zip(pathToSaveFile, getPathToLastFile());
+        if (!warnBeforeActionItem.isSelected()) {
+            doTheOverwrite();
+            return;
+        }
+
+        setConfirmationMenu(aysOverwriteLabel, yesOverwriteButton, noOverwriteButton, true);
 
     }
 
-    @FXML
-    public void onYesOverwrite() {
+    private void doTheOverwrite() throws IOException {
+        backupService.zip(pathToSaveFile, getPathToLastFile());
+    }
 
+    @FXML
+    public void onYesOverwrite() throws IOException {
+        doTheOverwrite();
+        setConfirmationMenu(aysOverwriteLabel, yesOverwriteButton, noOverwriteButton, false);
     }
 
     @FXML
     public void onNoOverwrite() {
-
+        setConfirmationMenu(aysOverwriteLabel, yesOverwriteButton, noOverwriteButton, false);
     }
 
     @FXML
@@ -179,12 +221,12 @@ public class BTWController {
 
         backupService.unzip(pathToSaveFile.getParent(), pathToLastZipFile);
 
-        setConfirmationMenu(aysApplyLabel, yesApplyButton, noApplyButton, false);
     }
 
     @FXML
     public void onYesApply() throws IOException {
         doTheApply();
+        setConfirmationMenu(aysApplyLabel, yesApplyButton, noApplyButton, false);
     }
 
     @FXML

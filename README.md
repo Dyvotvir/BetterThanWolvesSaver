@@ -4,7 +4,7 @@
 
 A specialized backup manager for Hardcore Minecraft worlds (originally created for the Better Than Wolves mod). Built to prevent permadeath trauma while keeping the challenge of Hardcore worlds intact.
 
-![Main UI](assets/preview.png)
+![Main UI](assets/preview1.png)
 
 ## 🕯️ The Problem
 
